@@ -422,18 +422,27 @@ function epl_property_get_the_full_address(){
  * @hooked epl_property_title
  * @hooked property_tab_address
 **/
-
-function epl_property_the_address() {
+function epl_property_the_address( $address_style = 'full' ) {
 
 	$epl_property_address_seperator	= apply_filters('epl_property_address_seperator',',');
 	
-	
 	global $property,$epl_settings;
+	
+	$address_types	= array(
+		'full',
+		'street-number',
+		'street',
+		'suburb',
+		'city',
+		'state',
+		'country'
+	);
 	
 	?>
 	<?php if ( $property->get_property_meta('property_address_display') == 'yes' ) { ?>
 		<span class="item-street"><?php echo $property->get_formatted_property_address(); ?></span>
 	<?php } ?>
+	
 	<span class="entry-title-sub">
 		<?php 
 			if( $property->get_property_meta('property_com_display_suburb') != 'no' || $property->get_property_meta('property_address_display') == 'yes' ) { ?>
@@ -443,23 +452,23 @@ function epl_property_the_address() {
 				}
 			}
 		?>
-		<?php 
-			if( $property->get_epl_settings('epl_enable_city_field') == 'yes' ) { ?>
-				<span class="item-city"><?php echo $property->get_property_meta('property_address_city'); ?></span><?php
-			}
-		?>
-		<span class="item-state"><?php echo $property->get_property_meta('property_address_state'); ?></span>
-		<span class="item-pcode"><?php echo $property->get_property_meta('property_address_postal_code'); ?></span>
-		<?php 
-			if( $property->get_epl_settings('epl_enable_country_field') == 'yes' ) { ?>
-				<span class="item-country"><?php echo $property->get_property_meta('property_address_country'); ?></span><?php
-			}
-		?>
+		<?php if ( $address_style == 'full' ) { ?>
+			<?php if( $property->get_epl_settings('epl_enable_city_field') == 'yes' ) { ?>
+					<span class="item-city"><?php echo $property->get_property_meta('property_address_city'); ?></span><?php
+			} ?>
+			<span class="item-state"><?php echo $property->get_property_meta('property_address_state'); ?></span>
+			<span class="item-pcode"><?php echo $property->get_property_meta('property_address_postal_code'); ?></span>
+			<?php 
+				if( $property->get_epl_settings('epl_enable_country_field') == 'yes' ) { ?>
+					<span class="item-country"><?php echo $property->get_property_meta('property_address_country'); ?></span><?php
+				}
+			?>
+		<?php } ?>
 	</span><?php
 }
-add_action('epl_property_title','epl_property_the_address');
-add_action('epl_property_tab_address','epl_property_the_address');
-add_action('epl_property_address','epl_property_the_address');
+add_action('epl_property_title','epl_property_the_address' , 1 );
+add_action('epl_property_tab_address','epl_property_the_address' , 1 );
+add_action('epl_property_address','epl_property_the_address' , 1 );
 
 /*
  * Suburb Name
